@@ -19,7 +19,7 @@ public:
     CompilerInfo();  // 构造函数
     ~CompilerInfo(); // 析构函数
 
-    // 识别编译器信息
+    // 声明识别编译器信息的函数IdentifyCompiler
     std::string IdentifyCompiler(const std::string& exePath);
 };
 

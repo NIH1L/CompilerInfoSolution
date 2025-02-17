@@ -6,8 +6,12 @@ CompilerInfo::CompilerInfo() {}
 
 CompilerInfo::~CompilerInfo() {}
 
+//定义CompilerInfo类中的IdentifyCompiler函数，使用const可让exePath能以字面量的形式输入，使用&传递exePath的值为引用，将直接取地址
 std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
+    //使用windows.h中的CreateFileA函数读取文件句柄，c_str()为转换为C风格字符串，因为该函数只能这么用。
+    //只读，允许其它进程共享该文件（不锁定），安全属性为默认NULL，只打开已有文件，文件属性为标准文件，模板文件设为不需要
     HANDLE hFile = CreateFileA(exePath.c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    //CreateFileA返回INVALID_HANDLE_VALUE则是没获取到句柄，即文件不存在或无法打开
     if (hFile == INVALID_HANDLE_VALUE) {
         return "错误：无法打开文件。";
     }
@@ -41,7 +45,9 @@ std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
         return "错误：无效的PE头。";
     }
 
+    //初始化，没有识别到匹配的版本则输出"未知编译器"
     std::string compilerInfo = "未知编译器";
+    /**
     if (ntHeaders->FileHeader.Machine == IMAGE_FILE_MACHINE_I386 ||
         ntHeaders->FileHeader.Machine == IMAGE_FILE_MACHINE_AMD64) {
         if (ntHeaders->OptionalHeader.MajorLinkerVersion >= 14) {
@@ -53,6 +59,51 @@ std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
         else {
             compilerInfo = "使用较旧版本的 MSVC 编译";
         }
+    **/
+    if (ntHeaders->FileHeader.Machine == IMAGE_FILE_MACHINE_I386 ||
+        ntHeaders->FileHeader.Machine == IMAGE_FILE_MACHINE_AMD64) {
+
+        int linkerVersion = ntHeaders->OptionalHeader.MajorLinkerVersion * 10 + ntHeaders->OptionalHeader.MinorLinkerVersion;
+
+        //VS版本判断
+        if (linkerVersion >= 143) {
+            compilerInfo = "使用 MSVC (Visual Studio 2022) 编译";
+        }
+        else if (linkerVersion >= 142) {
+            compilerInfo = "使用 MSVC (Visual Studio 2019) 编译";
+        }
+        else if (linkerVersion >= 141) {
+            compilerInfo = "使用 MSVC (Visual Studio 2017) 编译";
+        }
+        else if (linkerVersion >= 140) {
+            compilerInfo = "使用 MSVC (Visual Studio 2015) 编译";
+        }
+        else if (linkerVersion >= 120) {
+            compilerInfo = "使用 MSVC (Visual Studio 2013) 编译";
+        }
+        else if (linkerVersion >= 110) {
+            compilerInfo = "使用 MSVC (Visual Studio 2012) 编译";
+        }
+        else if (linkerVersion >= 100) {
+            compilerInfo = "使用 MSVC (Visual Studio 2010) 编译";
+        }
+        else if (linkerVersion >= 90) {
+            compilerInfo = "使用 MSVC (Visual Studio 2008) 编译";
+        }
+        else if (linkerVersion >= 80) {
+            compilerInfo = "使用 MSVC (Visual Studio 2005) 编译";
+        }
+        else if (linkerVersion >= 71) {
+            compilerInfo = "使用 MSVC (Visual Studio .NET 2003) 编译";
+        }
+        else if (linkerVersion >= 60) {
+            compilerInfo = "使用 MSVC (Visual Studio 6.0) 编译";
+        }
+        else {
+            compilerInfo = "使用较旧版本的 MSVC 编译";
+        }
+
+
     }
 
     UnmapViewOfFile(lpBase);
