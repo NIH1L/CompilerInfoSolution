@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CompilerInfo.h"
 #include <windows.h>
+#include <json/json.h>
 
 CompilerInfo::CompilerInfo() {}
 
@@ -113,8 +114,38 @@ std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
 }
 
 // 导出函数
-extern "C" COMPILERINFOLIB_API const char* GetCompilerInfo(const char* exePath) {
+/**extern "C" COMPILERINFOLIB_API const char* GetCompilerInfo(const char* exePath) {
     static CompilerInfo compiler;
     static std::string result = compiler.IdentifyCompiler(exePath);
     return result.c_str();
+}
+**/
+extern "C" COMPILERINFOLIB_API const char* GetCompilerInfoJson(const char* jsonInput) {
+    static std::string resultJson;  // 确保返回的字符串不会被释放
+
+    Json::Value root;
+    Json::CharReaderBuilder reader;
+    std::string errors;
+    std::istringstream s(jsonInput);
+
+    if (!Json::parseFromStream(reader, s, &root, &errors)) {
+        resultJson = R"({"error": "Invalid JSON"})";
+        return resultJson.c_str();
+    }
+
+    if (!root.isMember("exePath")) {
+        resultJson = R"({"error": "Missing exePath"})";
+        return resultJson.c_str();
+    }
+
+    std::string exePath = root["exePath"].asString();
+    CompilerInfo compiler;
+    std::string compilerResult = compiler.IdentifyCompiler(exePath);
+
+    Json::Value output;
+    output["exePath"] = exePath;
+    output["compilerInfo"] = compilerResult;
+    resultJson = output.toStyledString();
+
+    return resultJson.c_str();
 }

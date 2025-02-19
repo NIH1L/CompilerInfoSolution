@@ -23,7 +23,11 @@ public:
     std::string IdentifyCompiler(const std::string& exePath);
 };
 
-// 导出一个 C++ 兼容的函数给外部模块调用
-extern "C" {
+// 导出一个C++兼容的函数给外部模块调用
+/**extern "C" {
     COMPILERINFOLIB_API const char* GetCompilerInfo(const char* exePath);
+}
+**/
+extern "C" {
+    COMPILERINFOLIB_API const char* GetCompilerInfoJson(const char* exePath);
 }
