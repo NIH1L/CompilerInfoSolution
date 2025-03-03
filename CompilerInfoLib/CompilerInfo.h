@@ -29,5 +29,5 @@ public:
 }
 **/
 extern "C" {
-    COMPILERINFOLIB_API const char* GetCompilerInfoJson(const char* exePath);
+    COMPILERINFOLIB_API const char* GetCompilerInfoJson(const char* jsonInput);
 }

@@ -145,7 +145,11 @@ extern "C" COMPILERINFOLIB_API const char* GetCompilerInfoJson(const char* jsonI
     Json::Value output;
     output["exePath"] = exePath;
     output["compilerInfo"] = compilerResult;
-    resultJson = output.toStyledString();
+    // 使用 StreamWriterBuilder 生成不带 Unicode 转义的 JSON
+    Json::StreamWriterBuilder writer;
+    writer["emitUTF8"] = true;  // 让 JSON 直接输出 UTF-8
+    writer["indentation"] = ""; // 取消默认缩进
 
+    resultJson = Json::writeString(writer, output);
     return resultJson.c_str();
 }
