@@ -3,7 +3,7 @@
 
 int main() {
     //const char* exePath = "C:\\Users\\admin\\Downloads\\HPDesignjetZ6100PhotoPrinterSeriesPS3.exe";  // 要检测的可执行文件路径
-    const char* jsonInput = R"({"exePath": "C:\\Users\\91672\\Downloads\\HPDesignjetZ6100PhotoPrinterSeriesPS3.exe","rulesPath": "D:\\files\\codes\\C\\NIH1L\\CompilerInfoSolution\\rules.json"})";// 要检测的可执行文件路径
+    const char* jsonInput = R"({"exePath": "C:\\Users\\admin\\Downloads\\HPDesignjetZ6100PhotoPrinterSeriesPS3.exe","rulesPath": "D:\\files\\codes\\C\\NIH1L\\CompilerInfoSolution\\rules.json"})";// 要检测的可执行文件路径
 
     //const char* compilerInfo = GetCompilerInfo(exePath);
     const char* compilerInfo = GetCompilerInfoJson(jsonInput);
