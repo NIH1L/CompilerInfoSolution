@@ -4,7 +4,6 @@
 #include <windows.h>
 #include <json/json.h>
 #include <sstream>
-#include <iostream>
 
 CompilerInfo::CompilerInfo() {}
 
