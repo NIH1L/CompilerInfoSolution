@@ -1,11 +1,34 @@
 #include "pch.h"
 #include "CompilerInfo.h"
+#include <fstream>
 #include <windows.h>
 #include <json/json.h>
+#include <sstream>
+#include <iostream>
 
 CompilerInfo::CompilerInfo() {}
 
 CompilerInfo::~CompilerInfo() {}
+
+
+// 读取 JSON 文件
+Json::Value LoadJsonRules(const std::string& filePath) {
+    std::ifstream file(filePath, std::ifstream::binary);
+    Json::Value jsonData;
+    Json::CharReaderBuilder reader;
+    std::string errors;
+
+    if (!file.is_open()) {
+        throw std::runtime_error("无法打开规则文件: " + filePath);
+    }
+
+    if (!Json::parseFromStream(reader, file, &jsonData, &errors)) {
+        throw std::runtime_error("JSON 解析失败: " + errors);
+    }
+
+    return jsonData;
+}
+
 
 //定义CompilerInfo类中的IdentifyCompiler函数，使用const可让exePath能以字面量的形式输入，使用&传递exePath的值为引用，将直接取地址
 std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
@@ -46,8 +69,28 @@ std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
         return "错误：无效的PE头。";
     }
 
+    // 计算编译器版本号
+    int linkerVersion = ntHeaders->OptionalHeader.MajorLinkerVersion * 10 + ntHeaders->OptionalHeader.MinorLinkerVersion;
+
     //初始化，没有识别到匹配的版本则输出"未知编译器"
     std::string compilerInfo = "未知编译器";
+
+    try {
+        Json::Value rules = LoadJsonRules("rules.json");//默认路径在main.cpp主程序下面，也可以自定义完整路径("D:\\files\\codes\\C\\NIH1L\\CompilerInfoSolution\\rules.json");
+        for (const auto& compiler : rules["compilers"]) {
+            int minVersion = compiler["minVersion"].asInt();
+            int maxVersion = compiler["maxVersion"].asInt();
+
+            if (linkerVersion >= minVersion && linkerVersion <= maxVersion) {
+                compilerInfo = compiler["name"].asString();
+                break;
+            }
+        }
+    }
+    catch (const std::exception& e) {
+        compilerInfo = std::string("错误：") + e.what();
+    }
+
     /**
     if (ntHeaders->FileHeader.Machine == IMAGE_FILE_MACHINE_I386 ||
         ntHeaders->FileHeader.Machine == IMAGE_FILE_MACHINE_AMD64) {
@@ -61,6 +104,7 @@ std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
             compilerInfo = "使用较旧版本的 MSVC 编译";
         }
     **/
+    /**
     if (ntHeaders->FileHeader.Machine == IMAGE_FILE_MACHINE_I386 ||
         ntHeaders->FileHeader.Machine == IMAGE_FILE_MACHINE_AMD64) {
 
@@ -106,7 +150,7 @@ std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
 
 
     }
-
+    **/
     UnmapViewOfFile(lpBase);
     CloseHandle(hMapping);
     CloseHandle(hFile);

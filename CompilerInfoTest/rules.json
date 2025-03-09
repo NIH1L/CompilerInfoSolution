@@ -1,0 +1,15 @@
+{
+    "compilers": [
+        { "name": "MSVC (Visual Studio 2022)", "minVersion": 143, "maxVersion": 149 },
+        { "name": "MSVC (Visual Studio 2019)", "minVersion": 142, "maxVersion": 142 },
+        { "name": "MSVC (Visual Studio 2017)", "minVersion": 141, "maxVersion": 141 },
+        { "name": "MSVC (Visual Studio 2015)", "minVersion": 140, "maxVersion": 140 },
+        { "name": "MSVC (Visual Studio 2013)", "minVersion": 120, "maxVersion": 120 },
+        { "name": "MSVC (Visual Studio 2012)", "minVersion": 110, "maxVersion": 110 },
+        { "name": "MSVC (Visual Studio 2010)", "minVersion": 100, "maxVersion": 100 },
+        { "name": "MSVC (Visual Studio 2008)", "minVersion": 90, "maxVersion": 90 },
+        { "name": "MSVC (Visual Studio 2005)", "minVersion": 80, "maxVersion": 80 },
+        { "name": "MSVC (Visual Studio .NET 2003)", "minVersion": 71, "maxVersion": 71 },
+        { "name": "MSVC (Visual Studio 6.0)", "minVersion": 60, "maxVersion": 70 }
+    ]
+}
