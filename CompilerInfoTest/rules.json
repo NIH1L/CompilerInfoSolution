@@ -1,15 +1,144 @@
 {
     "compilers": [
-        { "name": "MSVC (Visual Studio 2022)", "minVersion": 143, "maxVersion": 149 },
-        { "name": "MSVC (Visual Studio 2019)", "minVersion": 142, "maxVersion": 142 },
-        { "name": "MSVC (Visual Studio 2017)", "minVersion": 141, "maxVersion": 141 },
-        { "name": "MSVC (Visual Studio 2015)", "minVersion": 140, "maxVersion": 140 },
-        { "name": "MSVC (Visual Studio 2013)", "minVersion": 120, "maxVersion": 120 },
-        { "name": "MSVC (Visual Studio 2012)", "minVersion": 110, "maxVersion": 110 },
-        { "name": "MSVC (Visual Studio 2010)", "minVersion": 100, "maxVersion": 100 },
-        { "name": "MSVC (Visual Studio 2008)", "minVersion": 90, "maxVersion": 90 },
-        { "name": "MSVC (Visual Studio 2005)", "minVersion": 80, "maxVersion": 80 },
-        { "name": "MSVC (Visual Studio .NET 2003)", "minVersion": 71, "maxVersion": 71 },
-        { "name": "MSVC (Visual Studio 6.0)", "minVersion": 60, "maxVersion": 70 }
+        {
+            "name": "MSVC (Visual Studio 6.0)",
+            "minVersion": 60,
+            "maxVersion": 69,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "MSVC (Visual Studio .NET 2003)",
+            "minVersion": 70,
+            "maxVersion": 79,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "MSVC (Visual Studio 2005)",
+            "minVersion": 80,
+            "maxVersion": 89,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "MSVC (Visual Studio 2008)",
+            "minVersion": 90,
+            "maxVersion": 99,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "MSVC (Visual Studio 2010)",
+            "minVersion": 100,
+            "maxVersion": 109,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "MSVC (Visual Studio 2012)",
+            "minVersion": 110,
+            "maxVersion": 119,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "MSVC (Visual Studio 2013)",
+            "minVersion": 120,
+            "maxVersion": 129,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "MSVC (Visual Studio 2015)",
+            "minVersion": 140,
+            "maxVersion": 149,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "MSVC (Visual Studio 2017)",
+            "minVersion": 141,
+            "maxVersion": 141,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "MSVC (Visual Studio 2019)",
+            "minVersion": 142,
+            "maxVersion": 142,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "MSVC (Visual Studio 2022)",
+            "minVersion": 143,
+            "maxVersion": 149,
+            "required_sections": [".rsrc", ".pdata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "GCC (MinGW 3.x - 4.x)",
+            "minVersion": 30,
+            "maxVersion": 49,
+            "required_sections": [".note.gnu.build-id"],
+            "forbidden_sections": [".rsrc", ".pdata"]
+        },
+        {
+            "name": "GCC (MinGW 5.x - 7.x)",
+            "minVersion": 50,
+            "maxVersion": 79,
+            "required_sections": [".note.gnu.build-id"],
+            "forbidden_sections": [".rsrc", ".pdata"]
+        },
+        {
+            "name": "GCC (MinGW 8.x - 13.x)",
+            "minVersion": 80,
+            "maxVersion": 139,
+            "required_sections": [".note.gnu.build-id"],
+            "forbidden_sections": [".rsrc", ".pdata"]
+        },
+        {
+            "name": "LLVM/Clang 3.x - 7.x",
+            "minVersion": 30,
+            "maxVersion": 79,
+            "required_sections": [".llvm"],
+            "forbidden_sections": [".rsrc"]
+        },
+        {
+            "name": "LLVM/Clang 8.x - 17.x",
+            "minVersion": 80,
+            "maxVersion": 179,
+            "required_sections": [".llvm"],
+            "forbidden_sections": [".rsrc"]
+        },
+        {
+            "name": "Intel C++ Compiler (ICC 10.x - 13.x)",
+            "minVersion": 100,
+            "maxVersion": 139,
+            "required_sections": [".idata", ".rsrc", ".pdata"],
+            "forbidden_sections": []
+        },
+        {
+            "name": "Intel C++ Compiler (ICC 14.x - 2022+)",
+            "minVersion": 140,
+            "maxVersion": 2029,
+            "required_sections": [".idata", ".rsrc", ".pdata"],
+            "forbidden_sections": []
+        },
+        {
+            "name": "Borland C++ (C++Builder 3.x - 6.x)",
+            "minVersion": 30,
+            "maxVersion": 69,
+            "required_sections": [".idata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        },
+        {
+            "name": "Embarcadero C++ (C++Builder 7+)",
+            "minVersion": 70,
+            "maxVersion": 149,
+            "required_sections": [".idata"],
+            "forbidden_sections": [".note.gnu.build-id", ".llvm"]
+        }
     ]
 }

@@ -28,6 +28,15 @@ Json::Value LoadJsonRules(const std::string& filePath) {
     return jsonData;
 }
 
+bool HasSection(PIMAGE_NT_HEADERS ntHeaders, LPBYTE baseAddr, const std::string& sectionName) {
+    PIMAGE_SECTION_HEADER section = IMAGE_FIRST_SECTION(ntHeaders);
+    for (int i = 0; i < ntHeaders->FileHeader.NumberOfSections; i++, section++) {
+        if (memcmp(section->Name, sectionName.c_str(), sectionName.length()) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
 
 //定义CompilerInfo类中的IdentifyCompiler函数，使用const可让exePath能以字面量的形式输入，使用&传递exePath的值为引用，将直接取地址
 std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
@@ -60,6 +69,7 @@ std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
         return "错误：不是有效的可执行文件。";
     }
 
+    
     PIMAGE_NT_HEADERS ntHeaders = (PIMAGE_NT_HEADERS)((BYTE*)lpBase + dosHeader->e_lfanew);
     if (ntHeaders->Signature != IMAGE_NT_SIGNATURE) {
         UnmapViewOfFile(lpBase);
@@ -70,10 +80,12 @@ std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
 
     // 计算编译器版本号
     int linkerVersion = ntHeaders->OptionalHeader.MajorLinkerVersion * 10 + ntHeaders->OptionalHeader.MinorLinkerVersion;
+    WORD subsystem = ntHeaders->OptionalHeader.Subsystem;  // 获取子系统
 
     //初始化，没有识别到匹配的版本则输出"未知编译器"
     std::string compilerInfo = "未知编译器";
 
+    /**
     try {
         Json::Value rules = LoadJsonRules("rules.json");//默认路径在main.cpp主程序下面，也可以自定义完整路径("D:\\files\\codes\\C\\NIH1L\\CompilerInfoSolution\\rules.json");
         for (const auto& compiler : rules["compilers"]) {
@@ -84,11 +96,36 @@ std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
                 compilerInfo = compiler["name"].asString();
                 break;
             }
+        }**/
+
+    /**
+    try {
+        Json::Value rules = LoadJsonRules("rules.json");
+        for (const auto& compiler : rules["compilers"]) {
+            int minVersion = compiler["minVersion"].asInt();
+            int maxVersion = compiler["maxVersion"].asInt();
+            std::string subsystemName = compiler.get("subsystem", "").asString();
+
+            // 先判断 MajorLinkerVersion
+            if (linkerVersion >= minVersion && linkerVersion <= maxVersion) {
+                if (!subsystemName.empty()) {
+                    // 如果规则里有 subsystem 限制，则要匹配 subsystem
+                    if ((subsystemName == "Cygwin" && subsystem != IMAGE_SUBSYSTEM_WINDOWS_CUI) ||
+                        (subsystemName == "GUI" && subsystem != IMAGE_SUBSYSTEM_WINDOWS_GUI)) {
+                        continue; // 子系统不匹配，跳过
+                    }
+                }
+
+                compilerInfo = compiler["name"].asString();
+                break;
+            }
         }
+
     }
     catch (const std::exception& e) {
         compilerInfo = std::string("错误：") + e.what();
     }
+    **/
 
     /**
     if (ntHeaders->FileHeader.Machine == IMAGE_FILE_MACHINE_I386 ||
@@ -150,6 +187,38 @@ std::string CompilerInfo::IdentifyCompiler(const std::string& exePath) {
 
     }
     **/
+    Json::Value rules = LoadJsonRules("rules.json");
+
+    for (const auto& compiler : rules["compilers"]) {
+        int minVersion = compiler["minVersion"].asInt();
+        int maxVersion = compiler["maxVersion"].asInt();
+        if (linkerVersion < minVersion || linkerVersion > maxVersion) continue;
+
+        // 检查必须存在的 PE 段
+        bool match = true;
+        for (const auto& requiredSection : compiler["required_sections"]) {
+            if (!HasSection(ntHeaders, (LPBYTE)lpBase, requiredSection.asString())) {
+                match = false;
+                break;
+            }
+        }
+
+        // 检查必须不存在的 PE 段
+        for (const auto& forbiddenSection : compiler["forbidden_sections"]) {
+            if (HasSection(ntHeaders, (LPBYTE)lpBase, forbiddenSection.asString())) {
+                match = false;
+                break;
+            }
+        }
+
+        if (match) {
+            compilerInfo = compiler["name"].asString();
+            break;
+        }
+    }
+
+
+
     UnmapViewOfFile(lpBase);
     CloseHandle(hMapping);
     CloseHandle(hFile);
